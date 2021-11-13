@@ -1,0 +1,57 @@
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Eclipse
+.project
+.classpath
+.settings
+
+# Idea
+.idea
+*.iml
+*.iws
+*.ipr
+
+# VSCode
+.vscode
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Gradle
+.gradle
+!gradle-wrapper.jar
+src/generated
+
+# Maven
+target
+
+# Build
+out
+build
+bin
+docs
+
+# Other
+*.log
+*.swp
+*.bak
+
+.gradle
+**/build/
+!src/**/build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
+
+home/

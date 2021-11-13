@@ -1,0 +1,46 @@
+apply plugin: "java"
+
+//================================================================
+//          Set to current Sherlock version found in ./libs/
+//          Both normal and dev jars must be in ./libs/
+//================================================================
+project.ext.sherlockVersion = "0.5.61"
+
+
+archivesBaseName = "Sherlock-Algorithms"
+group = 'uk.louistarvin.sherlock'
+version = "1.0"
+
+project.ext.libsDir = "libs"
+project.ext.buildDir = "build"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    flatDir {
+        dirs "${project.libsDir}"
+    }
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    compile name: "Sherlock-${project.sherlockVersion}-dev"
+
+    compile 'org.antlr:antlr4-runtime:4.7.2'
+}
+
+task run(dependsOn:jar) {
+    doLast {
+        javaexec {
+            main = "-jar"
+            args = ["${project.libsDir}/Sherlock-${project.sherlockVersion}.jar"]
+            jvmArgs = [
+                    "-Dmodules=${project.buildDir}/libs/", // Sets Sherlock to load modules from the build output directory, which loads the jar Gradle just built
+                    "-Dspring.output.ansi.enabled=ALWAYS",
+                    "-Dspring.profiles.active=dev"
+                    ]
+        }
+    }
+}
