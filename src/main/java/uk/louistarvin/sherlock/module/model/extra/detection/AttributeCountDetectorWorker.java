@@ -20,6 +20,8 @@ public class AttributeCountDetectorWorker extends PairwiseDetectorWorker<Attribu
 		List<IndexedString> linesF2 = this.file2.getPreProcessedLines("comments");
 		List<IndexedString> operatorsF1 = this.file1.getPreProcessedLines("operators");
 		List<IndexedString> operatorsF2 = this.file2.getPreProcessedLines("operators");
+		List<IndexedString> varsF1 = this.file1.getPreProcessedLines("variablesDeclaredAndUsed");
+		List<IndexedString> varsF2 = this.file2.getPreProcessedLines("variablesDeclaredAndUsed");
 
 		AttributeCountRawResult res = new AttributeCountRawResult(this.file1.getFile(), this.file2.getFile());
 
@@ -46,6 +48,10 @@ public class AttributeCountDetectorWorker extends PairwiseDetectorWorker<Attribu
 		// Set control statement counts
 		res.setFile1ControlStatements(Integer.parseInt(operatorsF1.get(4).getValue()));
 		res.setFile2ControlStatements(Integer.parseInt(operatorsF2.get(4).getValue()));
+
+		// Set variables declared and used
+		res.setFile1Variables(Integer.parseInt(varsF1.get(0).getValue()));
+		res.setFile2Variables(Integer.parseInt(varsF2.get(0).getValue()));
 
 		this.result = res;
 	}

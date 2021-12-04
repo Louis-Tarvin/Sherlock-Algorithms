@@ -7,7 +7,7 @@ import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 
 import java.util.*;
 
-public class OperatorExtractorJava implements IAdvancedPreProcessor<JavaLexer> {
+public class TokenCountsJava implements IAdvancedPreProcessor<JavaLexer> {
 
 	@Override
 	public List<IndexedString> process(JavaLexer lexer) {

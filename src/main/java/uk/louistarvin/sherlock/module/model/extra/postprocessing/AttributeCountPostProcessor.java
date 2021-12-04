@@ -38,7 +38,6 @@ public class AttributeCountPostProcessor implements IPostProcessor<AttributeCoun
 	public ModelTaskProcessedResults processResults(List<ISourceFile> files, List<AttributeCountRawResult> rawResults) {
 		ModelTaskProcessedResults results = new	ModelTaskProcessedResults();
 		Map<ISourceFile, Integer> totals = new HashMap<>();
-		System.out.println("Postprosessing");
 
 		for (AttributeCountRawResult res : rawResults) {
 			// Calculate correlation
@@ -80,22 +79,29 @@ public class AttributeCountPostProcessor implements IPostProcessor<AttributeCoun
 				correlation += controlStatementsImportance - diff;
 			}
 
-			float correlation_norm = correlation / 32.0f; // normalise the result
-			correlation_norm *= files.size() - 1; // hack to get Sherlock to display correct number
+			// variables declared and used
+			diff = Math.abs(res.getFile1Variables() - res.getFile2Variables());
+			if (diff <= declaredVarsWindowSize) {
+				correlation += declaredVarsImportance - diff;
+			}
 
-			totals.put(SherlockHelper.getSourceFile(res.getFile1id()), res.getFile1Lines());
+			float correlation_norm = correlation / 32.0f; // normalise the result
+			totals.put(SherlockHelper.getSourceFile(res.getFile1id()), (int)Math.round(correlation_norm * 100.0));
+			correlation_norm *= files.size() - 1; // hacky way to get Sherlock to display correct number
+
 			ICodeBlockGroup group = results.addGroup();
 			group.setComment("Line count: " + res.getFile1Lines());
 			try {
-				group.setDetectionType("BASE_COPIED_BLOCK");
+				group.setDetectionType("ATTRIBUTE_COUNT");
 			} catch(Exception e){
 				e.printStackTrace();
 			}
+			//System.out.println(SherlockHelper.getSourceFile(res.getFile1id()).getFileDisplayName() 
+					//+ " & " + SherlockHelper.getSourceFile(res.getFile2id()) 
+					//+ " correlation: " + correlation);
 			group.addCodeBlock(SherlockHelper.getSourceFile(res.getFile1id()), correlation_norm, new Tuple<Integer, Integer>(1, res.getFile1Lines() + 1));
 			group.addCodeBlock(SherlockHelper.getSourceFile(res.getFile2id()), correlation_norm, new Tuple<Integer, Integer>(1, res.getFile2Lines() + 1));
 		}
-
-		results.setFileTotals(totals);
 
 		return results;
 	}
