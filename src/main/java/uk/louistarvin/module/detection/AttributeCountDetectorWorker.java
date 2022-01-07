@@ -1,8 +1,8 @@
-package uk.louistarvin.sherlock.module.model.extra.detection;
+package uk.louistarvin.module.detection;
 
 import java.util.List;
 
-import uk.louistarvin.sherlock.module.model.extra.postprocessing.AttributeCountRawResult;
+import uk.louistarvin.module.postprocessing.AttributeCountRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.PairwiseDetectorWorker;

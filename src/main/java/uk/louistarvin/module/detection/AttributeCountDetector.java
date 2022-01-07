@@ -1,7 +1,7 @@
-package uk.louistarvin.sherlock.module.model.extra.detection;
+package uk.louistarvin.module.detection;
 
-import uk.louistarvin.sherlock.module.model.extra.preprocessing.TokenCounts;
-import uk.louistarvin.sherlock.module.model.extra.preprocessing.VarsDeclaredAndUsed;
+import uk.louistarvin.module.preprocessing.TokenCounts;
+import uk.louistarvin.module.preprocessing.VarsDeclaredAndUsed;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.PairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.CommentRemover;

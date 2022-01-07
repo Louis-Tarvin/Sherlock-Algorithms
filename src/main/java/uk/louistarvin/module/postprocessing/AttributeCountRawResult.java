@@ -1,4 +1,4 @@
-package uk.louistarvin.sherlock.module.model.extra.postprocessing;
+package uk.louistarvin.module.postprocessing;
 
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;

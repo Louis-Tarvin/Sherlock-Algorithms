@@ -1,4 +1,4 @@
-package uk.louistarvin.sherlock.module.model.extra.postprocessing;
+package uk.louistarvin.module.postprocessing;
 
 import java.util.HashMap;
 import java.util.List;

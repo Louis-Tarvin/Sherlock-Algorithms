@@ -1,4 +1,4 @@
-package uk.louistarvin.sherlock.module.model.extra.preprocessing;
+package uk.louistarvin.module.preprocessing;
 
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IAdvancedPreProcessorGroup;
 

@@ -1,4 +1,4 @@
-package uk.louistarvin.sherlock.module.model.extra.preprocessing;
+package uk.louistarvin.module.preprocessing;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;

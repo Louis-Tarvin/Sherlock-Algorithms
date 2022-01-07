@@ -1,4 +1,4 @@
-package uk.louistarvin.sherlock.module.model.extra;
+package uk.louistarvin.module;
 
 import uk.ac.warwick.dcs.sherlock.api.model.detection.PairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
