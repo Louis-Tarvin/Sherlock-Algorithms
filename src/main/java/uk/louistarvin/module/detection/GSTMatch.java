@@ -63,4 +63,27 @@ public class GSTMatch implements Serializable {
     public ITuple<Integer, Integer> getSecondLines() {
         return secondLines;
     }
+
+    /**
+     * Checks if this match overlaps with the other
+     * @param other The match to check against
+     * @return true if matches overlap, false otherwise
+     */
+    public boolean overlaps(GSTMatch other) {
+        if (firstIndex < other.getFirstIndex()) {
+            if ((other.getFirstIndex() - firstIndex) < length) {
+                return true;
+            }
+        } else {
+            if ((firstIndex - other.getFirstIndex()) < other.getLength()) {
+                return true;
+            }
+        }
+
+        if (secondIndex < other.getSecondIndex()) {
+            return (other.getSecondIndex() - secondIndex) < length;
+        } else {
+            return (secondIndex - other.getSecondIndex()) < other.getLength();
+        }
+    }
 }

@@ -22,7 +22,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
 
 public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTilingDetectorWorker> {
 
-	@AdjustableParameter (name = "Minimum Match Length", defaultValue = 4, minimumBound = 1, maxumumBound = 10, step = 1, description = "The lower bound for the length of a match. Smaller is more sensitive")
+	@AdjustableParameter (name = "Minimum Match Length", defaultValue = 16, minimumBound = 1, maxumumBound = 40, step = 1, description = "The lower bound for the length of a match. Smaller is more sensitive")
 	public int mml;
 
 	public GreedyStringTilingDetector() {
@@ -36,6 +36,7 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 	
 		public GreedyStringTilingDetectorWorker(IDetector parent, ModelDataItem file1Data, ModelDataItem file2Data) {
 			super(parent, file1Data, file2Data);
+			FillTokToIntMap();
 		}
 	
 	
@@ -92,10 +93,6 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 	
 		@Override
 		public void execute() {
-			// Initialise map if it hasn't been already
-			if (tokToIntMap == null) {
-				FillTokToIntMap();
-			}
 	
 			List<IndexedString> tokensF1 = this.file1.getPreProcessedLines("tokens");
 			List<IndexedString> tokensF2 = this.file2.getPreProcessedLines("tokens");
@@ -149,6 +146,9 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 			for (IndexedString s : tokensF1) {
 				System.out.println(s);
 			}
+			for (IndexedString s : tokensF2) {
+				System.out.println(s);
+			}
 	
 			// Main algorithm
 			int maxMatch;
@@ -169,19 +169,20 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 							int j = 0;
 							while (a+j < smaller.size()-1 && b+j < larger.size()-1 && smaller.get(a+j).getValue() == larger.get(b+j).getValue() 
 								&& !smaller.get(a+j).isMarked() && !larger.get(b+j).isMarked()) {
+								// Extend the match as far as possible
 								j++;
 							}
 							if (j == maxMatch) {
-								Tuple<Integer, Integer> file1Lines = new Tuple<>(smaller.get(a).getLineNo(), smaller.get(a+j).getLineNo());
-								Tuple<Integer, Integer> file2Lines = new Tuple<>(larger.get(b).getLineNo(), larger.get(b+j).getLineNo());
+								Tuple<Integer, Integer> file1Lines = new Tuple<>(smaller.get(a).getLineNo(), smaller.get(a+j-1).getLineNo());
+								Tuple<Integer, Integer> file2Lines = new Tuple<>(larger.get(b).getLineNo(), larger.get(b+j-1).getLineNo());
 								GSTMatch match = new GSTMatch(smallerFile.getPersistentId(), largerFile.getPersistentId(), a, b, j, file1Lines, file2Lines);
-								newMatches.add(match);
+								addMatchIfNotOverlapping(newMatches, match);
 							} else if (j > maxMatch) {
 								newMatches.clear();
-								Tuple<Integer, Integer> file1Lines = new Tuple<>(smaller.get(a).getLineNo(), smaller.get(a+j).getLineNo());
-								Tuple<Integer, Integer> file2Lines = new Tuple<>(larger.get(b).getLineNo(), larger.get(b+j).getLineNo());
+								Tuple<Integer, Integer> file1Lines = new Tuple<>(smaller.get(a).getLineNo(), smaller.get(a+j-1).getLineNo());
+								Tuple<Integer, Integer> file2Lines = new Tuple<>(larger.get(b).getLineNo(), larger.get(b+j-1).getLineNo());
 								GSTMatch match = new GSTMatch(smallerFile.getPersistentId(), largerFile.getPersistentId(), a, b, j, file1Lines, file2Lines);
-								newMatches.add(match);
+								addMatchIfNotOverlapping(newMatches, match);
 								maxMatch = j;
 							}
 						}
@@ -207,6 +208,15 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 			}
 	
 			this.result = res;
+		}
+
+		private void addMatchIfNotOverlapping(List<GSTMatch> matches, GSTMatch newMatch) {
+			for (GSTMatch match : matches) {
+				if (match.overlaps(newMatch)) {
+					return;
+				}
+			}
+			matches.add(newMatch);
 		}
 	
 		private void FillTokToIntMap() {
@@ -341,6 +351,10 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 	
 			public int getLineNo() {
 				return lineNo;
+			}
+
+			public String getName() {
+				return name;
 			}
 	
 			public int getValue() {
