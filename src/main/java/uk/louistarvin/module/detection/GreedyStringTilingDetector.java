@@ -143,12 +143,12 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 				}
 			}
 	
-			for (IndexedString s : tokensF1) {
-				System.out.println(s);
-			}
-			for (IndexedString s : tokensF2) {
-				System.out.println(s);
-			}
+			// for (IndexedString s : tokensF1) {
+			// 	System.out.println(s);
+			// }
+			// for (IndexedString s : tokensF2) {
+			// 	System.out.println(s);
+			// }
 	
 			// Main algorithm
 			int maxMatch;
@@ -205,6 +205,15 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 	
 			for (GSTMatch match : tiles) {
 				res.addObject(match);
+				System.out.println("file 1: " + match.getFirstLines() + "; file 2: " + match.getSecondLines());
+				for (int i = 0; i < match.getLength(); i++) {
+					System.out.print(smaller.get(match.getFirstIndex() + i).getName() + " ");
+				}
+				System.out.println();
+				for (int i = 0; i < match.getLength(); i++) {
+					System.out.print(larger.get(match.getSecondIndex() + i).getName() + " ");
+				}
+				System.out.println();
 			}
 	
 			this.result = res;
