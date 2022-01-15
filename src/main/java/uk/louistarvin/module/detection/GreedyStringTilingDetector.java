@@ -93,9 +93,13 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 	
 		@Override
 		public void execute() {
-	
+			// Get the tokenised files
 			List<IndexedString> tokensF1 = this.file1.getPreProcessedLines("tokens");
 			List<IndexedString> tokensF2 = this.file2.getPreProcessedLines("tokens");
+
+			// Arrays to keep track of the number of tokens for each line
+			int[] tokensPerLineF1 = new int[this.file1.getFile().getTotalLineCount()+1];
+			int[] tokensPerLineF2 = new int[this.file2.getFile().getTotalLineCount()+1];
 	
 			// Convert IndexedStrings into MarkedTokens
 			List<MarkedToken> markedTokensF1 = new ArrayList<>();
@@ -104,6 +108,7 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 				for (String t : tokens) {
 					MarkedToken mt = new MarkedToken(s.getKey(), t, tokToIntMap.get(t));
 					markedTokensF1.add(mt);
+					tokensPerLineF1[s.getKey()] += 1;
 				}
 			}
 			List<MarkedToken> markedTokensF2 = new ArrayList<>();
@@ -112,23 +117,31 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 				for (String t : tokens) {
 					MarkedToken mt = new MarkedToken(s.getKey(), t, tokToIntMap.get(t));
 					markedTokensF2.add(mt);
+					tokensPerLineF2[s.getKey()] += 1;
 				}
 			}
 	
+			// Figure out which of the files is smaller
 			List<MarkedToken> larger, smaller;
 			ISourceFile largerFile, smallerFile;
+			int[] largerTokensPerLine, smallerTokensPerLine;
 			if (markedTokensF1.size() > markedTokensF2.size()) {
 				larger = markedTokensF1;
 				smaller = markedTokensF2;
 				largerFile = this.file1.getFile();
 				smallerFile = this.file2.getFile();
+				largerTokensPerLine = tokensPerLineF1;
+				smallerTokensPerLine = tokensPerLineF2;
 			} else {
 				larger = markedTokensF2;
 				smaller = markedTokensF1;
 				largerFile = this.file2.getFile();
 				smallerFile = this.file1.getFile();
+				largerTokensPerLine = tokensPerLineF2;
+				smallerTokensPerLine = tokensPerLineF1;
 			}
 	
+			// Generate hashes
 			Integer[] smallerHashes = generateHashes(smaller.toArray(new MarkedToken[smaller.size()]));
 			Integer[] largerHashes = generateHashes(larger.toArray(new MarkedToken[larger.size()]));
 			// Hashes from larger submission are placed into a hash table
@@ -167,23 +180,30 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 								continue; // skip marked tokens
 							}
 							int j = 0;
-							while (a+j < smaller.size()-1 && b+j < larger.size()-1 && smaller.get(a+j).getValue() == larger.get(b+j).getValue() 
+							while (a+j < smaller.size() && b+j < larger.size() && smaller.get(a+j).getValue() == larger.get(b+j).getValue() 
 								&& !smaller.get(a+j).isMarked() && !larger.get(b+j).isMarked()) {
 								// Extend the match as far as possible
 								j++;
 							}
-							if (j == maxMatch) {
+							if (j >= maxMatch) {
+								if (j > maxMatch) {
+									// New maximum match length
+									newMatches.clear();
+									maxMatch = j;
+								}
+								// Create and add the match
 								Tuple<Integer, Integer> file1Lines = new Tuple<>(smaller.get(a).getLineNo(), smaller.get(a+j-1).getLineNo());
 								Tuple<Integer, Integer> file2Lines = new Tuple<>(larger.get(b).getLineNo(), larger.get(b+j-1).getLineNo());
-								GSTMatch match = new GSTMatch(smallerFile.getPersistentId(), largerFile.getPersistentId(), a, b, j, file1Lines, file2Lines);
+								int file1LinesTokens = 0;
+								for (int i = file1Lines.getKey(); i <= file1Lines.getValue(); i++) {
+									file1LinesTokens += smallerTokensPerLine[i];
+								}
+								int file2LinesTokens = 0;
+								for (int i = file2Lines.getKey(); i <= file2Lines.getValue(); i++) {
+									file2LinesTokens += largerTokensPerLine[i];
+								}
+								GSTMatch match = new GSTMatch(smallerFile.getPersistentId(), largerFile.getPersistentId(), a, b, j, file1Lines, file1LinesTokens, file2Lines, file2LinesTokens);
 								addMatchIfNotOverlapping(newMatches, match);
-							} else if (j > maxMatch) {
-								newMatches.clear();
-								Tuple<Integer, Integer> file1Lines = new Tuple<>(smaller.get(a).getLineNo(), smaller.get(a+j-1).getLineNo());
-								Tuple<Integer, Integer> file2Lines = new Tuple<>(larger.get(b).getLineNo(), larger.get(b+j-1).getLineNo());
-								GSTMatch match = new GSTMatch(smallerFile.getPersistentId(), largerFile.getPersistentId(), a, b, j, file1Lines, file2Lines);
-								addMatchIfNotOverlapping(newMatches, match);
-								maxMatch = j;
 							}
 						}
 					}

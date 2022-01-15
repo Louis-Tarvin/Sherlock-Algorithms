@@ -91,17 +91,20 @@ public class GreedyStringTilingPostProcessor implements IPostProcessor<GreedyStr
                 HashSet<Long> addedFileIDs = new HashSet<>();
                 for (GSTMatch match : group) {
                     if (!addedFileIDs.contains(match.getFirstFileID())) {
-                        newGroup.addCodeBlock(SherlockHelper.getSourceFile(match.getFirstFileID()), 1.0f, match.getFirstLines());
+                        newGroup.addCodeBlock(SherlockHelper.getSourceFile(match.getFirstFileID()), 
+                            ((float) match.getLength())/((float) match.getFirstLinesTokens()), 
+                            match.getFirstLines());
                         addedFileIDs.add(match.getFirstFileID());
                     }
                     if (!addedFileIDs.contains(match.getSecondFileID())) {
-                        newGroup.addCodeBlock(SherlockHelper.getSourceFile(match.getSecondFileID()), 1.0f, match.getSecondLines());
+                        newGroup.addCodeBlock(SherlockHelper.getSourceFile(match.getSecondFileID()), 
+                            ((float) match.getLength())/((float) match.getSecondLinesTokens()), 
+                            match.getSecondLines());
                         addedFileIDs.add(match.getSecondFileID());
                     }
                 }
                 try {
-                    //TODO: create new detection type
-                    newGroup.setDetectionType("BASE_COPIED_BLOCK");
+                    newGroup.setDetectionType("GST_MATCH");
                 } catch (UnknownDetectionTypeException e) {
                     e.printStackTrace();
                 }
