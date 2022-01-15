@@ -26,7 +26,7 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 	public int mml;
 
 	public GreedyStringTilingDetector() {
-		super("GST", "Greedy String Tiling", GreedyStringTilingDetectorWorker.class, PreProcessingStrategy.of("tokens", true, Tokenizer.class));
+		super("GST", "Tokenizes the files then uses Greedy String Tiling to find matching segments", GreedyStringTilingDetectorWorker.class, PreProcessingStrategy.of("tokens", true, Tokenizer.class));
 	}
 
 	public class GreedyStringTilingDetectorWorker extends PairwiseDetectorWorker<GreedyStringTilingRawResult<GSTMatch>> {
