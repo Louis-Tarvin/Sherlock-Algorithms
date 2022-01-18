@@ -1,5 +1,6 @@
 package uk.louistarvin.module.preprocessing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.Token;
@@ -18,8 +19,27 @@ public class Tokenizer implements IGeneralPreProcessor {
 
     @Override
     public List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, String lang) {
-        System.out.println("tokens" + tokens);
-        return tokens;
+        List<Token> result = new ArrayList<>();
+
+		for (Token t : tokens) {
+
+            // Ignore comments and whitespace
+			switch (StandardLexerSpecification.channels.values()[t.getChannel()]) {
+				case DEFAULT:
+					result.add(t);
+					break;
+				// case WHITESPACE:
+				// 	result.add(t);
+				// 	break;
+				// case LONG_WHITESPACE:
+				// 	result.add(t);
+				// 	break;
+				default:
+					break;
+			}
+		}
+
+        return result;
     }
 
 }

@@ -21,6 +21,8 @@ public class GSTMatch implements Serializable {
     
     /**
      * Constructor, stores all inputted data in the container object.
+     * @param firstFileID The ID of the first submission
+     * @param secondFileID The ID of the second submission
      * @param firstIndex The index of the token for the first submission.
      * @param secondIndex The index of the token for the second submission.
      * @param length The length of the match.

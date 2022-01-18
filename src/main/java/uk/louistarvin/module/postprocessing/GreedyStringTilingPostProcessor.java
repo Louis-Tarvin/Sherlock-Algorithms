@@ -61,7 +61,6 @@ public class GreedyStringTilingPostProcessor implements IPostProcessor<GreedyStr
 
         for (GreedyStringTilingRawResult<GSTMatch> result : rawResults) {
             for (GSTMatch match : result.getObjects()) {
-                System.out.println(match.getLength());
                 if (matches.size() == 0) {
                     matches.add(new ArrayList<>());
                     matches.get(0).add(match);
@@ -82,8 +81,6 @@ public class GreedyStringTilingPostProcessor implements IPostProcessor<GreedyStr
             // A list of all match block groups
             // Each group is stored as a sub list and has the same common code block
             ArrayList<ArrayList<GSTMatch>> matches = GroupMatches(rawResults);
-
-            System.out.println(matches.size());
 
             // Create a group for each group of matches
             for (ArrayList<GSTMatch> group : matches) {
