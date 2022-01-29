@@ -80,7 +80,7 @@ public class GreedyStringTilingDetector extends PairwiseDetector<GreedyStringTil
 			int hs = 0;
 			List<Integer> hashes = new ArrayList<>();
 			for (int i = 0; i < tokens.length - mml; i++) {
-				// Generate hashes and fill table using Rabin fingerprint rolling hash
+				// Generate hashes using Rabin fingerprint rolling hash
 				if (i == 0) {
 					hs = hash(Arrays.copyOfRange(tokens, i, i + mml));
 				} else {

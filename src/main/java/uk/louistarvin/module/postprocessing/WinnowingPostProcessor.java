@@ -10,11 +10,11 @@ import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.util.SherlockHelper;
-import uk.louistarvin.module.detection.GSTMatch;
+import uk.louistarvin.module.detection.WinnowingMatch;
 
-public class GreedyStringTilingPostProcessor implements IPostProcessor<GreedyStringTilingRawResult> {
+public class WinnowingPostProcessor implements IPostProcessor<WinnowingRawResult> {
 
-    private boolean isLinked(GSTMatch first, GSTMatch second) {
+    private boolean isLinked(WinnowingMatch first, WinnowingMatch second) {
         // Check each file combination. If the files and block are the same, return true
         if (first.getLength() == second.getLength()) {
             if (first.getFirstFileID() == second.getFirstFileID() && first.getFirstIndex() == second.getFirstIndex()) {
@@ -36,10 +36,10 @@ public class GreedyStringTilingPostProcessor implements IPostProcessor<GreedyStr
      * @param match the match to add
      * @param matches The list of grouped matches
      */
-    private void addToMatches(GSTMatch match, ArrayList<ArrayList<GSTMatch>> matches) {
+    private void addToMatches(WinnowingMatch match, ArrayList<ArrayList<WinnowingMatch>> matches) {
         // Check each group in matches to see if match is linked
-        for (ArrayList<GSTMatch> group : matches) {
-            for (GSTMatch other : group) {
+        for (ArrayList<WinnowingMatch> group : matches) {
+            for (WinnowingMatch other : group) {
                 if (isLinked(match, other)) {
                     group.add(match);
                     return;
@@ -56,11 +56,11 @@ public class GreedyStringTilingPostProcessor implements IPostProcessor<GreedyStr
      * @param rawResults The raw match data produced by the detector
      * @return The grouped matches, with each group stored as a sub list
      */
-    private ArrayList<ArrayList<GSTMatch>> GroupMatches(List<GreedyStringTilingRawResult> rawResults) {
-        ArrayList<ArrayList<GSTMatch>> matches = new ArrayList<>();
+    private ArrayList<ArrayList<WinnowingMatch>> GroupMatches(List<WinnowingRawResult> rawResults) {
+        ArrayList<ArrayList<WinnowingMatch>> matches = new ArrayList<>();
 
-        for (GreedyStringTilingRawResult<GSTMatch> result : rawResults) {
-            for (GSTMatch match : result.getObjects()) {
+        for (WinnowingRawResult<WinnowingMatch> result : rawResults) {
+            for (WinnowingMatch match : result.getObjects()) {
                 if (matches.size() == 0) {
                     matches.add(new ArrayList<>());
                     matches.get(0).add(match);
@@ -72,30 +72,29 @@ public class GreedyStringTilingPostProcessor implements IPostProcessor<GreedyStr
 
         return matches;
     }
-
     @Override
     public ModelTaskProcessedResults processResults(List<ISourceFile> files,
-            List<GreedyStringTilingRawResult> rawResults) {
+            List<WinnowingRawResult> rawResults) {
         ModelTaskProcessedResults results = new	ModelTaskProcessedResults();
 
         // A list of all match block groups
         // Each group is stored as a sub list and has the same common code block
-        ArrayList<ArrayList<GSTMatch>> matches = GroupMatches(rawResults);
+        ArrayList<ArrayList<WinnowingMatch>> matches = GroupMatches(rawResults);
 
         // Create a group for each group of matches
-        for (ArrayList<GSTMatch> group : matches) {
+        for (ArrayList<WinnowingMatch> group : matches) {
             ICodeBlockGroup newGroup = results.addGroup();
             HashSet<Long> addedFileIDs = new HashSet<>();
-            for (GSTMatch match : group) {
+            for (WinnowingMatch match : group) {
                 if (!addedFileIDs.contains(match.getFirstFileID())) {
                     newGroup.addCodeBlock(SherlockHelper.getSourceFile(match.getFirstFileID()), 
-                        ((float) match.getLength())/((float) match.getFirstLinesTokens()), 
+                        ((float) 1.0), 
                         match.getFirstLines());
                     addedFileIDs.add(match.getFirstFileID());
                 }
                 if (!addedFileIDs.contains(match.getSecondFileID())) {
                     newGroup.addCodeBlock(SherlockHelper.getSourceFile(match.getSecondFileID()), 
-                        ((float) match.getLength())/((float) match.getSecondLinesTokens()), 
+                        ((float) 1.0), 
                         match.getSecondLines());
                     addedFileIDs.add(match.getSecondFileID());
                 }
