@@ -88,13 +88,13 @@ public class WinnowingPostProcessor implements IPostProcessor<WinnowingRawResult
             for (WinnowingMatch match : group) {
                 if (!addedFileIDs.contains(match.getFirstFileID())) {
                     newGroup.addCodeBlock(SherlockHelper.getSourceFile(match.getFirstFileID()), 
-                        ((float) 1.0), 
+                        ((float) match.getLength()) / ((float) match.getFirstLinesHashes()), 
                         match.getFirstLines());
                     addedFileIDs.add(match.getFirstFileID());
                 }
                 if (!addedFileIDs.contains(match.getSecondFileID())) {
                     newGroup.addCodeBlock(SherlockHelper.getSourceFile(match.getSecondFileID()), 
-                        ((float) 1.0), 
+                        ((float) match.getLength()) / ((float) match.getSecondLinesHashes()), 
                         match.getSecondLines());
                     addedFileIDs.add(match.getSecondFileID());
                 }

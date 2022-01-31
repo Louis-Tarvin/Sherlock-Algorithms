@@ -208,19 +208,35 @@ public class WinnowingDetector extends PairwiseDetector<WinnowingDetectorWorker>
 			KGram[] fingerprintF1 = winnow(kgramsF1);
 			KGram[] fingerprintF2 = winnow(kgramsF2);
 
+			// Arrays to keep track of the number of hashes for each line
+			int[] hashesPerLineF1 = new int[this.file1.getFile().getTotalLineCount()+1];
+			int[] hashesPerLineF2 = new int[this.file2.getFile().getTotalLineCount()+1];
+
+			for (int i = 0; i < fingerprintF1.length; i++) {
+				hashesPerLineF1[fingerprintF1[i].getStartLine()]++;
+			}
+			for (int i = 0; i < fingerprintF2.length; i++) {
+				hashesPerLineF2[fingerprintF2[i].getStartLine()]++;
+			}
+
 			// Figure out which of the files is smaller
 			KGram[] larger, smaller;
 			ISourceFile largerFile, smallerFile;
+			int[] largerHashesPerLine, smallerHashesPerLine;
 			if (fingerprintF1.length > fingerprintF2.length) {
 				larger = fingerprintF1;
 				smaller = fingerprintF2;
 				largerFile = this.file1.getFile();
 				smallerFile = this.file2.getFile();
+				largerHashesPerLine = hashesPerLineF1;
+				smallerHashesPerLine = hashesPerLineF2;
 			} else {
 				larger = fingerprintF2;
 				smaller = fingerprintF1;
 				largerFile = this.file2.getFile();
 				smallerFile = this.file1.getFile();
+				largerHashesPerLine = hashesPerLineF2;
+				smallerHashesPerLine = hashesPerLineF1;
 			}
 	
 			// Hashes from larger submission are placed into a hash table
@@ -266,7 +282,15 @@ public class WinnowingDetector extends PairwiseDetector<WinnowingDetectorWorker>
 								// Create and add the match
 								Tuple<Integer, Integer> file1Lines = new Tuple<>(smaller[a].getStartLine(), smaller[a+j-1].getEndLine());
 								Tuple<Integer, Integer> file2Lines = new Tuple<>(larger[b].getStartLine(), larger[b+j-1].getEndLine());
-								WinnowingMatch match = new WinnowingMatch(smallerFile.getPersistentId(), largerFile.getPersistentId(), a, b, j, file1Lines, file2Lines);
+								int file1LinesHashes = 0;
+								for (int i = file1Lines.getKey(); i <= file1Lines.getValue(); i++) {
+									file1LinesHashes += smallerHashesPerLine[i];
+								}
+								int file2LinesHashes = 0;
+								for (int i = file2Lines.getKey(); i <= file2Lines.getValue(); i++) {
+									file2LinesHashes += largerHashesPerLine[i];
+								}
+								WinnowingMatch match = new WinnowingMatch(smallerFile.getPersistentId(), largerFile.getPersistentId(), a, b, j, file1Lines, file1LinesHashes, file2Lines, file2LinesHashes);
 								newMatches.add(match);
 							}
 						}
