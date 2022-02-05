@@ -9,23 +9,37 @@ import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.SherlockHelper;
+import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.louistarvin.module.detection.WinnowingMatch;
 
 public class WinnowingPostProcessor implements IPostProcessor<WinnowingRawResult> {
 
     private boolean isLinked(WinnowingMatch first, WinnowingMatch second) {
         // Check each file combination. If the files and block are the same, return true
-        if (first.getLength() == second.getLength()) {
-            if (first.getFirstFileID() == second.getFirstFileID() && first.getFirstIndex() == second.getFirstIndex()) {
-                return true;
-            } else if (first.getSecondFileID() == second.getFirstFileID() && first.getSecondIndex() == second.getFirstIndex()) {
-                return true;
-            } else if (first.getFirstFileID() == second.getSecondFileID() && first.getFirstIndex() == second.getSecondIndex()) {
-                return true;
-            } else if (first.getSecondFileID() == second.getSecondFileID() && first.getSecondIndex() == second.getSecondIndex()) {
-                return true;
-            }
+        ITuple<Integer, Integer> firstLines, secondLines;
+        if (first.getFirstFileID() == second.getFirstFileID()) {
+            firstLines = first.getFirstLines();
+            secondLines = second.getFirstLines();
+        } else if (first.getSecondFileID() == second.getFirstFileID()) {
+            firstLines = first.getSecondLines();
+            secondLines = second.getFirstLines();
+        } else if (first.getFirstFileID() == second.getSecondFileID()) {
+            firstLines = first.getFirstLines();
+            secondLines = second.getSecondLines();
+        } else if (first.getSecondFileID() == second.getSecondFileID()) {
+            firstLines = first.getSecondLines();
+            secondLines = second.getSecondLines();
+        } else {
+            // No common file
+            return false;
+        }
+        if (firstLines.getKey() == secondLines.getKey() 
+            && firstLines.getValue() == secondLines.getValue()
+            && firstLines.getKey() != firstLines.getValue()) {
+            // Code blocks are the same -> files are linked
+            return true;
         }
         // No match was found
         return false;
@@ -75,6 +89,7 @@ public class WinnowingPostProcessor implements IPostProcessor<WinnowingRawResult
     @Override
     public ModelTaskProcessedResults processResults(List<ISourceFile> files,
             List<WinnowingRawResult> rawResults) {
+        System.out.println("Postprocessing");
         ModelTaskProcessedResults results = new	ModelTaskProcessedResults();
 
         // A list of all match block groups
@@ -88,13 +103,13 @@ public class WinnowingPostProcessor implements IPostProcessor<WinnowingRawResult
             for (WinnowingMatch match : group) {
                 if (!addedFileIDs.contains(match.getFirstFileID())) {
                     newGroup.addCodeBlock(SherlockHelper.getSourceFile(match.getFirstFileID()), 
-                        ((float) match.getLength()) / ((float) match.getFirstLinesHashes()), 
+                        ((float) match.getFirstSegmentScore()) / ((float) match.getFirstLinesChars()), 
                         match.getFirstLines());
                     addedFileIDs.add(match.getFirstFileID());
                 }
                 if (!addedFileIDs.contains(match.getSecondFileID())) {
                     newGroup.addCodeBlock(SherlockHelper.getSourceFile(match.getSecondFileID()), 
-                        ((float) match.getLength()) / ((float) match.getSecondLinesHashes()), 
+                        ((float) match.getSecondSegmentScore()) / ((float) match.getSecondLinesChars()), 
                         match.getSecondLines());
                     addedFileIDs.add(match.getSecondFileID());
                 }

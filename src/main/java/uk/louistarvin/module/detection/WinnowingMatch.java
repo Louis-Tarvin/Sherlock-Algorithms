@@ -11,29 +11,41 @@ public class WinnowingMatch implements Serializable {
     private final int secondIndex; // The index of the fingerprint for the second submission
     private final int length; // The length of the match
     private final ITuple<Integer, Integer> firstLines; // The start and end lines in the first file
-    private final int firstLinesHashes; // The number of hashes in the fingerprint between start and end lines in the first file
     private final ITuple<Integer, Integer> secondLines; // The start and end lines in the second file
-    private final int secondLinesHashes; // The number of hashes in the fingerprint between start and end lines in the second file
+    private final int firstLinesChars; // The number of characters between start and end lines in the first file
+    private final int secondLinesChars; // The number of characters between start and end lines in the second file
+    private final int firstSegmentScore;
+    private final int secondSegmentScore;
 
     public WinnowingMatch(long firstFileID, long secondFileID, int firstIndex, int secondIndex, int length, ITuple<Integer, Integer> firstLines,
-            int firstLinesHashes, ITuple<Integer, Integer> secondLines, int secondLinesHashes) {
+            ITuple<Integer, Integer> secondLines, int firstLinesChars, int secondLinesChars, int firstSegmentScore, int secondSegmentScore) {
         this.firstFileID = firstFileID;
         this.secondFileID = secondFileID;
         this.firstIndex = firstIndex;
         this.secondIndex = secondIndex;
         this.length = length;
         this.firstLines = firstLines;
-        this.firstLinesHashes = firstLinesHashes;
         this.secondLines = secondLines;
-        this.secondLinesHashes = secondLinesHashes;
+        this.firstLinesChars = firstLinesChars;
+        this.secondLinesChars = secondLinesChars;
+        this.firstSegmentScore = firstSegmentScore;
+        this.secondSegmentScore = secondSegmentScore;
     }
 
-    public int getFirstLinesHashes() {
-        return firstLinesHashes;
+    public int getFirstSegmentScore() {
+        return firstSegmentScore;
     }
 
-    public int getSecondLinesHashes() {
-        return secondLinesHashes;
+    public int getSecondSegmentScore() {
+        return secondSegmentScore;
+    }
+
+    public int getFirstLinesChars() {
+        return firstLinesChars;
+    }
+
+    public int getSecondLinesChars() {
+        return secondLinesChars;
     }
 
     public ITuple<Integer, Integer> getFirstLines() {
