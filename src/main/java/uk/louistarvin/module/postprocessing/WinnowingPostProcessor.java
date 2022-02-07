@@ -115,7 +115,7 @@ public class WinnowingPostProcessor implements IPostProcessor<WinnowingRawResult
                 }
             }
             try {
-                newGroup.setDetectionType("GST_MATCH");
+                newGroup.setDetectionType("WINNOWING_MATCH");
             } catch (UnknownDetectionTypeException e) {
                 e.printStackTrace();
             }

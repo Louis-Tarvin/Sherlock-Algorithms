@@ -341,7 +341,7 @@ public class WinnowingDetector extends PairwiseDetector<WinnowingDetectorWorker>
 									file2LinesChars,
 									file1SegmentScore,
 									file2SegmentScore);
-								newMatches.add(match);
+								addMatchIfNotOverlapping(newMatches, match);
 							}
 						}
 					}
@@ -374,6 +374,15 @@ public class WinnowingDetector extends PairwiseDetector<WinnowingDetectorWorker>
 	
 			this.result = res;
         }
+
+		private void addMatchIfNotOverlapping(List<WinnowingMatch> matches, WinnowingMatch newMatch) {
+			for (WinnowingMatch match : matches) {
+				if (match.overlaps(newMatch)) {
+					return;
+				}
+			}
+			matches.add(newMatch);
+		}
 
 		/**
 		 * A hashed K-gram from a submission
