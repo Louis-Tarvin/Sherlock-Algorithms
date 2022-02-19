@@ -2,8 +2,6 @@ package uk.louistarvin.module.postprocessing;
 
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
-import java.io.Serializable;
-
 
 public class AttributeCountRawResult extends AbstractModelTaskRawResult {
 
@@ -38,13 +36,11 @@ public class AttributeCountRawResult extends AbstractModelTaskRawResult {
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean testType(AbstractModelTaskRawResult baseline) {
-		// TODO Auto-generated method stub
 		return baseline instanceof AttributeCountRawResult;
 	}	
 

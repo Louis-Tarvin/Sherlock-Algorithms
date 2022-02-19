@@ -16,7 +16,6 @@ public class TokenCountsJava implements IAdvancedPreProcessor<JavaLexer> {
 		lexer.reset();
 		CommonTokenStream tokStream = new CommonTokenStream(lexer);
 		tokStream.fill();
-		String fileName = lexer.getSourceName();
 
 		int totalOperatorCount = 0;
 		int uniqueOperatorCount = 0;
@@ -74,9 +73,6 @@ public class TokenCountsJava implements IAdvancedPreProcessor<JavaLexer> {
 		// Index 4 -> control statements 
 		fields.add(new IndexedString(4, String.valueOf(totalControlStatements)));
 
-		System.out.println(fileName + " field -> " + fields.toString());
-		System.out.println(fileName + " operands -> " + seenOperands.toString());
-		System.out.println(fileName + " control -> " + String.valueOf(totalControlStatements));
 		return fields;
 	}
 }

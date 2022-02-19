@@ -14,8 +14,8 @@ public class WinnowingMatch implements Serializable {
     private final ITuple<Integer, Integer> secondLines; // The start and end lines in the second file
     private final int firstLinesChars; // The number of characters between start and end lines in the first file
     private final int secondLinesChars; // The number of characters between start and end lines in the second file
-    private final int firstSegmentScore;
-    private final int secondSegmentScore;
+    private final int firstSegmentScore; // The segment score for the first file
+    private final int secondSegmentScore; // The segment score for the second file
 
     public WinnowingMatch(long firstFileID, long secondFileID, int firstIndex, int secondIndex, int length, ITuple<Integer, Integer> firstLines,
             ITuple<Integer, Integer> secondLines, int firstLinesChars, int secondLinesChars, int firstSegmentScore, int secondSegmentScore) {

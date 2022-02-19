@@ -11,7 +11,6 @@ import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.SherlockHelper;
-import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.louistarvin.module.detection.WinnowingMatch;
 
 public class WinnowingPostProcessor implements IPostProcessor<WinnowingRawResult> {
@@ -89,7 +88,6 @@ public class WinnowingPostProcessor implements IPostProcessor<WinnowingRawResult
     @Override
     public ModelTaskProcessedResults processResults(List<ISourceFile> files,
             List<WinnowingRawResult> rawResults) {
-        System.out.println("Postprocessing");
         ModelTaskProcessedResults results = new	ModelTaskProcessedResults();
 
         // A list of all match block groups
@@ -103,13 +101,13 @@ public class WinnowingPostProcessor implements IPostProcessor<WinnowingRawResult
             for (WinnowingMatch match : group) {
                 if (!addedFileIDs.contains(match.getFirstFileID())) {
                     newGroup.addCodeBlock(SherlockHelper.getSourceFile(match.getFirstFileID()), 
-                        ((float) match.getFirstSegmentScore()) / ((float) match.getFirstLinesChars()), 
+                        (float) Math.min((float) (match.getFirstSegmentScore()) / (float) (match.getFirstLinesChars()), 1.0f), 
                         match.getFirstLines());
                     addedFileIDs.add(match.getFirstFileID());
                 }
                 if (!addedFileIDs.contains(match.getSecondFileID())) {
                     newGroup.addCodeBlock(SherlockHelper.getSourceFile(match.getSecondFileID()), 
-                        ((float) match.getSecondSegmentScore()) / ((float) match.getSecondLinesChars()), 
+                        (float) Math.min((float) (match.getSecondSegmentScore()) / (float) (match.getSecondLinesChars()), 1.0f), 
                         match.getSecondLines());
                     addedFileIDs.add(match.getSecondFileID());
                 }

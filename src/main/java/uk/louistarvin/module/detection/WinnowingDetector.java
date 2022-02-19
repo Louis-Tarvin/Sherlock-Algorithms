@@ -113,15 +113,11 @@ public class WinnowingDetector extends PairwiseDetector<WinnowingDetectorWorker>
 					} else {
 						if (hs == -1) {
 							// generate initial hash value
-							// System.out.println(charQueue.toArray(new Character[k]));
 							hs = hash(charQueue.toArray(new Character[k]));
-							// System.out.println("initial hash: " + hs);
 						} else {
-							// System.out.println("oldChar: " + oldChar + "; newChar: " + charQueue.getLast());
 							hs = rehash(hs, oldChar, charQueue.getLast(), base_offset);
 						}
 						// move the hashing window to the right
-						// System.out.println(charQueue + " - " + hs);
 						oldChar = charQueue.remove();
 						charQueue.add(chars.charAt(j));
 						kgrams.add(new KGram(charQueue.toArray(new Character[k]), hs, indexQueue.remove(), lineQueue.remove(), lines.get(i).getKey()));
@@ -135,12 +131,10 @@ public class WinnowingDetector extends PairwiseDetector<WinnowingDetectorWorker>
 				if (hs == -1) {
 					// generate initial hash value
 					hs = hash(charQueue.toArray(new Character[k]));
-					// System.out.println("initial hash: " + hs);
 				} else {
 					hs = rehash(hs, oldChar, charQueue.getLast(), base_offset);
 				}
 				// move the hashing window to the right
-				// System.out.println(charQueue);
 				kgrams.add(new KGram(charQueue.toArray(new Character[k]), hs, indexQueue.remove(), lineQueue.remove(), lines.get(lines.size()-1).getKey()));
 			}
 			return kgrams.toArray(new KGram[kgrams.size()]);
@@ -177,14 +171,12 @@ public class WinnowingDetector extends PairwiseDetector<WinnowingDetectorWorker>
 							min = j;
 					}
 					fingerprint.add(window[min]);
-					// System.out.println(window[min].getHash());
 				} else {
 					// The previous minimum is still in the window.
 					// Compare against the new value and update min if necessary
 					if (window[r].getHash() <= window[min].getHash()) {
 						min = r;
 						fingerprint.add(window[min]);
-						// System.out.println(window[min].getHash());
 					}
 				}
 			}
@@ -230,14 +222,6 @@ public class WinnowingDetector extends PairwiseDetector<WinnowingDetectorWorker>
             // Get the pre-processed lines
 			List<IndexedString> linesF1 = this.file1.getPreProcessedLines("lines");
 			List<IndexedString> linesF2 = this.file2.getPreProcessedLines("lines");
-
-            for (IndexedString line: linesF1) {
-                System.out.println(line);
-            }
-
-            // for (IndexedString line: linesF2) {
-            //     System.out.println(line);
-            // }
 
 			KGram[] kgramsF1 = generateHashes(linesF1);
 			KGram[] kgramsF2 = generateHashes(linesF2);
@@ -292,7 +276,6 @@ public class WinnowingDetector extends PairwiseDetector<WinnowingDetectorWorker>
 			int maxMatch;
 			List<WinnowingMatch> tiles = new ArrayList<>();
 			do {
-				System.out.println("loop");
 				maxMatch = 1;
 				List<WinnowingMatch> newMatches = new ArrayList<>();
 				for (int a = 0; a < smaller.length - maxMatch; a++) {
@@ -356,19 +339,12 @@ public class WinnowingDetector extends PairwiseDetector<WinnowingDetectorWorker>
 				}
 	
 			} while (maxMatch > 1);
-			System.out.println("done");
 
 			// Return the result
 			WinnowingRawResult<WinnowingMatch> res;
 			res = new WinnowingRawResult<WinnowingMatch>(smallerFile, largerFile);
 	
 			for (WinnowingMatch match : tiles) {
-				System.out.println("first index: " + match.getFirstIndex() + "; length: " + match.getLength());
-				System.out.print(match.getFirstLinesChars());
-				System.out.print("first lines: " + match.getFirstLines());
-				System.out.println("second index: " + match.getSecondIndex() + "; length: " + match.getLength());
-				System.out.print(match.getSecondLinesChars());
-				System.out.print("second lines: " + match.getSecondLines());
 				res.addObject(match);
 			}
 	
